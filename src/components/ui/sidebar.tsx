@@ -17,9 +17,7 @@ interface SidebarContextProps {
   animate: boolean;
 }
 
-const SidebarContext = createContext<SidebarContextProps | undefined>(
-  undefined
-);
+const SidebarContext = createContext<SidebarContextProps | undefined>(undefined);
 
 export const useSidebar = () => {
   const context = useContext(SidebarContext);
@@ -89,7 +87,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
           className
         )}
         animate={{
@@ -99,6 +97,11 @@ export const DesktopSidebar = ({
         onMouseLeave={() => setOpen(false)}
         {...props}
       >
+        <div className="flex items-center gap-2 mb-6">
+          <span className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
+            DriveOrBit
+          </span>
+        </div>
         {children}
       </motion.div>
     </>
@@ -115,7 +118,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full flex-shrink-0"
         )}
         {...props}
       >
@@ -146,6 +149,11 @@ export const MobileSidebar = ({
               >
                 <IconX />
               </div>
+              <div className="flex items-center gap-2 mb-6">
+                <span className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
+                  DriveOrBit
+                </span>
+              </div>
               {children}
             </motion.div>
           )}
@@ -169,7 +177,7 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
+        "flex items-center justify-start gap-2 group/sidebar py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg px-2 transition-colors duration-150",
         className
       )}
       {...props}
@@ -186,5 +194,24 @@ export const SidebarLink = ({
         {link.label}
       </motion.span>
     </Link>
+  );
+};
+
+export const SidebarSection = ({
+  title,
+  children,
+}: {
+  title?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className="flex flex-col gap-2 mb-6">
+      {title && (
+        <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+          {title}
+        </span>
+      )}
+      {children}
+    </div>
   );
 };
