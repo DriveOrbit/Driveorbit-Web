@@ -10,15 +10,14 @@ import {
   IconPhone,
   IconSettings,
   IconUser,
-  IconBrandTabler,
-  IconArrowLeft,
 } from "@tabler/icons-react";
-import Link from "next/link";
+import Link, {LinkProps } from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import RealTimeMap from "@/components/ui/RealTimeMap"; // Import the RealTimeMap component
 
 export function SidebarDemo() {
-  const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>("dashboard"); // Track active section
 
   return (
     <div
@@ -27,18 +26,18 @@ export function SidebarDemo() {
       )}
     >
       {/* Sidebar */}
-      <Sidebar open={open} setOpen={setOpen}>
+      <Sidebar>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
-              {/* Add the sidebar content here */}
+              {/*sidebar content here */}
             <SidebarLink
                   link={{
                     label: "Dashboard",
-                    href: "/dashbaord",
+                    href: "#",
                     icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
                   }}
+                  onClick={() => setActiveSection("dashboard")} // set active section to dashboard
                 />
             <SidebarLink
                   link={{
@@ -98,8 +97,18 @@ export function SidebarDemo() {
         </SidebarBody>
       </Sidebar>
 
-      {/* Dashboard Content */}
-      <Dashboard />
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        {activeSection === "dashboard" && ( // Conditionally render the map
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow">
+              <h2 className="text-xl font-semibold mb-4">Real-Time Map</h2>
+              <RealTimeMap /> {/* Render the RealTimeMap component */}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -117,7 +126,6 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-medium text-black dark:text-white whitespace-pre"
       >
-        
       </motion.span>
     </Link>
   );
@@ -135,31 +143,6 @@ export const LogoIcon = () => {
   );
 };
 
-// Dashboard Component
-const Dashboard = () => {
-  return (
-    <div className="flex flex-1">
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
-        <div className="flex gap-2">
-          {[...Array(4)].map((_, index) => (
-            <div
-              key={`first-array-${index}`}
-              className="h-20 w-full rounded-lg bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
-        </div>
-        <div className="flex gap-2 flex-1">
-          {[...Array(2)].map((_, index) => (
-            <div
-              key={`second-array-${index}`}
-              className="h-full w-full rounded-lg bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // Default Export for the Page
 export default function Page() {

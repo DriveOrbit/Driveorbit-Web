@@ -5,6 +5,7 @@ import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 
+
 interface Links {
   label: string;
   href: string;
@@ -81,7 +82,7 @@ export const DesktopSidebar = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof motion.div>) => {
+}:  React.ComponentProps<typeof motion.div>) => {
   const { open, setOpen, animate } = useSidebar();
   return (
     <>
@@ -166,10 +167,12 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  onClick,  //Add onclick prop
   ...props
 }: {
   link: Links;
   className?: string;
+  onClick?: () => void;  //Define onclick prop
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
@@ -180,6 +183,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2 group/sidebar py-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg px-2 transition-colors duration-150",
         className
       )}
+      onClick={onClick}  //Pass onclick to the link component
       {...props}
     >
       {link.icon}
