@@ -103,7 +103,6 @@ export function SidebarDemo() {
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
             <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow">
-              <h2 className="text-xl font-semibold mb-4">Real-Time Map</h2>
               <RealTimeMap /> {/* Render the RealTimeMap component */}
             </div>
           </div>

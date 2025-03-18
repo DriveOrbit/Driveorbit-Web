@@ -1,69 +1,40 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import React, {useEffect} from 'react';
+import {Loader} from '@googlemaps/js-api-loader'; 
 
-// Map container style
-const mapContainerStyle = {
-  width: "100%",
-  height: "400px",
-};
+export default function GoogleMaps() {
+    const mapRef =React.useRef<HTMLDivElement>(null);
 
-// Default center (fallback if user location is not available)
-const center = {
-  lat: 7.8731, // Latitude for Sri Lanka
-  lng: 80.7718, // Longitude for Sri Lanka
-};
+    useEffect(() => {
+        const initializeMap = async () => {
+            const loader = new Loader({
+                apiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
+                version: 'quarterly',
+            });
 
-// Custom map styles to hide POI (Points of Interest) labels
-const mapStyles = [
-  {
-    featureType: "poi",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-];
+            const { Map} = await loader.importLibrary('maps');
 
-export default function RealTimeMap() {
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+            const locationMap ={
+                lat:6.927079, 
+                lng:79.861244,
+            };
+            //marker
 
-  // Load the Google Maps script
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyD9PILxIkeKyNug0d5Gtpx7qHPTg--xhvc", //  API key 
-  });
+            const options: google.maps.MapOptions = {
+                center: locationMap,
+                zoom: 15,
+                mapId: 'NEXT_MAPS_Tuts',
+        };
+        const map = new Map(mapRef.current as HTMLDivElement, options);
+    };
 
-  // Track user location
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, []);
+        initializeMap();
+    }, []);
 
-  // Handle errors while loading the map
-  if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading Maps...</div>;
-
-  return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={15} // Zoom level for better visibility of user location
-      center={userLocation || center} // Use user location if available, otherwise fallback to default center
-      options={{ styles: mapStyles }} // Apply custom map styles
-    >
-      {/* Display a marker at the user's location */}
-      {userLocation && <Marker position={userLocation} />}
-    </GoogleMap>
-  );
+    return (
+    <div className="h-[600px]" ref={mapRef}>
+        
+    </div>
+    );
 }
