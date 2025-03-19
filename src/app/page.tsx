@@ -11,13 +11,14 @@ import {
   IconSettings,
   IconUser,
 } from "@tabler/icons-react";
-import Link, {LinkProps } from "next/link";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import RealTimeMap from "@/components/ui/RealTimeMap"; // Import the RealTimeMap component
+import RealTimeMap from "@/components/ui/RealTimeMap";
+import VehicleList from "@/components/ui/VehicleList";
 
 export function SidebarDemo() {
-  const [activeSection, setActiveSection] = useState<string | null>("dashboard"); // Track active section
+  const [activeSection, setActiveSection] = useState<string | null>("dashboard");
 
   return (
     <div
@@ -30,29 +31,28 @@ export function SidebarDemo() {
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <div className="mt-8 flex flex-col gap-2">
-              {/*sidebar content here */}
-            <SidebarLink
-                  link={{
-                    label: "Dashboard",
-                    href: "#",
-                    icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                  onClick={() => setActiveSection("dashboard")} // set active section to dashboard
-                />
-            <SidebarLink
-                  link={{
-                    label: "Vehicles",
-                    href: "/vehicles",
-                    icon: <IconCar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
               <SidebarLink
-                  link={{
-                    label: "Drivers",
-                    href: "/drivers",
-                    icon: <IconUsersGroup className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
+                link={{
+                  label: "Dashboard",
+                  href: "#",
+                  icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+                }}
+                onClick={() => setActiveSection("dashboard")}
+              />
+              <SidebarLink
+                link={{
+                  label: "Vehicles",
+                  href: "/vehicles",
+                  icon: <IconCar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+                }}
+              />
+              <SidebarLink
+                link={{
+                  label: "Drivers",
+                  href: "/drivers",
+                  icon: <IconUsersGroup className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+                }}
+              />
               <SidebarSection title="CHAT SECTION">
                 <SidebarLink
                   link={{
@@ -99,11 +99,28 @@ export function SidebarDemo() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
-        {activeSection === "dashboard" && ( // Conditionally render the map
+        {activeSection === "dashboard" && (
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow">
-              <RealTimeMap /> {/* Render the RealTimeMap component */}
+            
+            {/* Side-by-side layout for map and vehicles */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Map takes up 2/3 of the space on larger screens */}
+              <div className="lg:col-span-2">
+                <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
+                  <h2 className="text-lg font-semibold mb-2">Real-Time Vehicle Tracking</h2>
+                  <div className="h-[500px]">
+                    <RealTimeMap />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Vehicles list takes up 1/3 of the space */}
+              <div className="lg:col-span-1">
+                <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
+                  <VehicleList />
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -112,14 +129,13 @@ export function SidebarDemo() {
   );
 }
 
-// Logo Component
+// Logo Component (unchanged)
 export const Logo = () => {
   return (
     <Link
       href="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
-      
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -130,7 +146,7 @@ export const Logo = () => {
   );
 };
 
-// LogoIcon Component
+// LogoIcon Component (unchanged)
 export const LogoIcon = () => {
   return (
     <Link
@@ -141,7 +157,6 @@ export const LogoIcon = () => {
     </Link>
   );
 };
-
 
 // Default Export for the Page
 export default function Page() {
