@@ -1,0 +1,43 @@
+import { Vehicle } from '@/types/fleet';
+
+export const mockVehicles: Vehicle[] = [
+  {
+    id: '1',
+    name: 'Toyota',
+    model: '2023',
+    type: 'Van',
+    status: 'Available',
+    imageUrl:'https://images.unsplash.com/photo-1617788138017-80ad40651399',
+    features: ['Autopilot', 'hybrid', 'Premium Sound'],
+    capacity: 18,
+    fuelType: 'hybrid',
+    licensePlate: 'EV-2023',
+    lastMaintenance: '2024-03-01',
+  },
+  {
+    id: '2',
+    name: 'Range Rover Sport',
+    model: '2024',
+    type: 'SUV',
+    status: 'Available',
+    imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6',
+    features: ['4x4', 'Leather Interior', 'Panoramic Roof'],
+    capacity: 7,
+    fuelType: 'Hybrid',
+    licensePlate: 'SUV-2024',
+    lastMaintenance: '2024-02-15',
+  },
+  {
+    id: '3',
+    name: 'Mercedes Sprinter',
+    model: '2023',
+    type: 'Van',
+    status: 'Available',
+    imageUrl: 'https://images.unsplash.com/photo-1632163930097-e1c99bf68e84',
+    features: ['Cargo Space', 'Navigation', 'Backup Camera'],
+    capacity: 12,
+    fuelType: 'Diesel',
+    licensePlate: 'VAN-2023',
+    lastMaintenance: '2024-03-10',
+  },
+];
