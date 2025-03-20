@@ -1,171 +1,124 @@
 "use client";
 import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink, SidebarSection } from "@/components/ui/sidebar";
+import { 
+  Sidebar, 
+  SidebarBody, 
+  SidebarLink, 
+  SidebarSection,
+  Navbar 
+} from "@/components/ui/sidebar";
 import {
   IconDashboard,
   IconCar,
   IconUsersGroup,
-  IconMail,
-  IconMessage,
-  IconPhone,
   IconSettings,
   IconUser,
-  IconBrandTabler,
-  IconArrowLeft,
+  IconTool,
+  IconAlertTriangle
 } from "@tabler/icons-react";
-import Link from "next/link";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export function SidebarDemo() {
-  const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("dashboard");
 
   return (
-    <div
-      className={cn(
-        "h-screen w-screen flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800"
-      )}
-    >
+    <div className="h-screen flex flex-col md:flex-row bg-neutral-950">
       {/* Sidebar */}
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
+      <Sidebar>
+        <SidebarBody className="justify-between">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {/* Add the sidebar content here */}
-            <SidebarLink
-                  link={{
-                    label: "Dashboard",
-                    href: "/dashbaord",
-                    icon: <IconDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-            <SidebarLink
-                  link={{
-                    label: "Vehicles",
-                    href: "/vehicles",
-                    icon: <IconCar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
+            {/* Main Navigation */}
+            <div className="mb-8 px-3">
               <SidebarLink
-                  link={{
-                    label: "Drivers",
-                    href: "/drivers",
-                    icon: <IconUsersGroup className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-              <SidebarSection title="CHAT SECTION">
-                <SidebarLink
-                  link={{
-                    label: "Emails",
-                    href: "/emails",
-                    icon: <IconMail className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-                <SidebarLink
-                  link={{
-                    label: "Chats",
-                    href: "/chats",
-                    icon: <IconMessage className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-                <SidebarLink
-                  link={{
-                    label: "Calls",
-                    href: "/calls",
-                    icon: <IconPhone className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-              </SidebarSection>
-              <SidebarSection title="OTHERS">
-                <SidebarLink
-                  link={{
-                    label: "Settings",
-                    href: "/settings",
-                    icon: <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-                <SidebarLink
-                  link={{
-                    label: "Account",
-                    href: "/account",
-                    icon: <IconUser className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-                  }}
-                />
-              </SidebarSection>
+                link={{
+                  label: "Dashboard",
+                  href: "#",
+                  icon: <IconDashboard className="h-5 w-5" />,
+                }}
+                active={activeSection === "dashboard"}
+                onClick={() => setActiveSection("dashboard")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Vehicles",
+                  href: "#",
+                  icon: <IconCar className="h-5 w-5" />,
+                }}
+                active={activeSection === "vehicles"}
+                onClick={() => setActiveSection("vehicles")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Drivers",
+                  href: "#",
+                  icon: <IconUsersGroup className="h-5 w-5" />,
+                }}
+                active={activeSection === "drivers"}
+                onClick={() => setActiveSection("drivers")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Settings",
+                  href: "#",
+                  icon: <IconSettings className="h-5 w-5" />,
+                }}
+                active={activeSection === "settings"}
+                onClick={() => setActiveSection("settings")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Account",
+                  href: "#",
+                  icon: <IconUser className="h-5 w-5" />,
+                }}
+                active={activeSection === "account"}
+                onClick={() => setActiveSection("account")}
+              />
+            </div>
+            
+            {/* Maintenance Section with divider */}
+            <div className="border-t border-neutral-800 mx-3 mb-4"></div>
+            
+            <div className="px-3">
+              <SidebarLink
+                link={{
+                  label: "Service Schedule",
+                  href: "#",
+                  icon: <IconTool className="h-5 w-5" />,
+                }}
+                active={activeSection === "service"}
+                onClick={() => setActiveSection("service")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Issues",
+                  href: "#",
+                  icon: <IconAlertTriangle className="h-5 w-5" />,
+                }}
+                active={activeSection === "issues"}
+                onClick={() => setActiveSection("issues")}
+              />
             </div>
           </div>
         </SidebarBody>
       </Sidebar>
 
-      {/* Dashboard Content */}
-      <Dashboard />
-    </div>
-  );
-}
-
-// Logo Component
-export const Logo = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
-        
-      </motion.span>
-    </Link>
-  );
-};
-
-// LogoIcon Component
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-    </Link>
-  );
-};
-
-// Dashboard Component
-const Dashboard = () => {
-  return (
-    <div className="flex flex-1">
-      <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
-        <div className="flex gap-2">
-          {[...Array(4)].map((_, index) => (
-            <div
-              key={`first-array-${index}`}
-              className="h-20 w-full rounded-lg bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
-        </div>
-        <div className="flex gap-2 flex-1">
-          {[...Array(2)].map((_, index) => (
-            <div
-              key={`second-array-${index}`}
-              className="h-full w-full rounded-lg bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            ></div>
-          ))}
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar />
+        <div className="flex-1 overflow-y-auto bg-neutral-900 p-6">
         </div>
       </div>
     </div>
   );
-};
+}
 
 // Default Export for the Page
 export default function Page() {
-  return (
-    <div>
-      <SidebarDemo />
-    </div>
-  );
+  return <SidebarDemo />;
 }
