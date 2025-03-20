@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { IconTruck, IconAlertTriangle, IconInfoCircle, IconMap, IconRoute } from '@tabler/icons-react';
+import { IconTruck, IconMap, IconRoute } from '@tabler/icons-react';
 
 interface Vehicle {
   id: string;
