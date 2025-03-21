@@ -11,7 +11,7 @@ import { Card } from '@/components/ui/card';
 
 export default function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [activeSection, setActiveSection] = useState<'fleet' | 'registered' | 'maintenance'>('fleet');
+  const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance'>('overview');
   
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
@@ -44,42 +44,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {activeSection === 'fleet' ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <Car className="h-8 w-8 text-primary" />
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">Today's Fleet</h1>
-              </div>
-              <button
-                onClick={() => setActiveSection('fleet')}
-                className="text-sm text-primary hover:text-primary/80"
-              >
-                Back to Overview
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {availableVehicles.map((vehicle) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  onClick={setSelectedVehicle}
-                />
-              ))}
-            </div>
-
-            <VehicleDialog
-              vehicle={selectedVehicle}
-              open={!!selectedVehicle}
-              onOpenChange={(open) => !open && setSelectedVehicle(null)}
-            />
-          </motion.div>
-        ) : (
+        {activeSection === 'overview' ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,6 +75,74 @@ export default function Home() {
                   </div>
                 </Card>
               ))}
+            </div>
+          </motion.div>
+        ) : activeSection === 'fleet' ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Car className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Today's Fleet</h1>
+              </div>
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {availableVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onClick={setSelectedVehicle}
+                />
+              ))}
+            </div>
+
+            <VehicleDialog
+              vehicle={selectedVehicle}
+              open={!!selectedVehicle}
+              onOpenChange={(open) => !open && setSelectedVehicle(null)}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                {activeSection === 'registered' ? (
+                  <ClipboardList className="h-8 w-8 text-primary" />
+                ) : (
+                  <Wrench className="h-8 w-8 text-primary" />
+                )}
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  {activeSection === 'registered' ? 'Registered Vehicles' : 'Maintenance'}
+                </h1>
+              </div>
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">
+                {activeSection === 'registered' 
+                  ? 'Registered vehicles information will be displayed here'
+                  : 'Maintenance information will be displayed here'}
+              </p>
             </div>
           </motion.div>
         )}
