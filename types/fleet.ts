@@ -1,3 +1,17 @@
+export interface MaintenanceLog {
+  id: string;
+  date: string;
+  type: 'License Renewal' | 'Echo Test' | 'Part Replacement' | 'Regular Service';
+  description: string;
+  nextDueDate: string;
+  cost?: number;
+  partDetails?: {
+    name: string;
+    serialNumber?: string;
+    warranty?: string;
+  };
+}
+
 export interface Vehicle {
   id: string;
   name: string;
@@ -10,6 +24,7 @@ export interface Vehicle {
   fuelType: string;
   licensePlate: string;
   lastMaintenance: string;
+  maintenanceLogs: MaintenanceLog[];
 }
 
 export interface FleetResponse {

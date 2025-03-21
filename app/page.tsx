@@ -5,6 +5,7 @@ import { Vehicle } from '@/types/fleet';
 import { mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
+import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -41,10 +42,10 @@ export default function Home() {
     }
   ];
 
-  return (
-    <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {activeSection === 'overview' ? (
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -77,7 +78,10 @@ export default function Home() {
               ))}
             </div>
           </motion.div>
-        ) : activeSection === 'fleet' ? (
+        );
+
+      case 'fleet':
+        return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -105,14 +109,11 @@ export default function Home() {
                 />
               ))}
             </div>
-
-            <VehicleDialog
-              vehicle={selectedVehicle}
-              open={!!selectedVehicle}
-              onOpenChange={(open) => !open && setSelectedVehicle(null)}
-            />
           </motion.div>
-        ) : (
+        );
+
+      case 'registered':
+        return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -120,13 +121,9 @@ export default function Home() {
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                {activeSection === 'registered' ? (
-                  <ClipboardList className="h-8 w-8 text-primary" />
-                ) : (
-                  <Wrench className="h-8 w-8 text-primary" />
-                )}
+                <ClipboardList className="h-8 w-8 text-primary" />
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                  {activeSection === 'registered' ? 'Registered Vehicles' : 'Maintenance'}
+                  Registered Vehicles
                 </h1>
               </div>
               <button
@@ -137,16 +134,78 @@ export default function Home() {
               </button>
             </div>
             
-            <div className="flex items-center justify-center h-64">
-              <p className="text-muted-foreground">
-                {activeSection === 'registered' 
-                  ? 'Registered vehicles information will be displayed here'
-                  : 'Maintenance information will be displayed here'}
-              </p>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {mockVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onClick={setSelectedVehicle}
+                />
+              ))}
             </div>
           </motion.div>
-        )}
+        );
+
+      case 'maintenance':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Wrench className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  Maintenance Logs
+                </h1>
+              </div>
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
+            </div>
+
+            <div className="space-y-8">
+              {mockVehicles.map((vehicle) => (
+                <div key={vehicle.id} className="border rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">{vehicle.name}</h2>
+                    <span className={`px-3 py-1 rounded-full text-sm ${
+                      vehicle.status === 'Maintenance' 
+                        ? 'bg-destructive/10 text-destructive' 
+                        : 'bg-primary/10 text-primary'
+                    }`}>
+                      {vehicle.status}
+                    </span>
+                  </div>
+                  
+                  <div className="grid gap-4">
+                    {vehicle.maintenanceLogs.map((log) => (
+                      <MaintenanceLog key={log.id} log={log} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        {renderContent()}
       </div>
+
+      <VehicleDialog
+        vehicle={selectedVehicle}
+        open={!!selectedVehicle}
+        onOpenChange={(open) => !open && setSelectedVehicle(null)}
+      />
     </main>
   );
 }
