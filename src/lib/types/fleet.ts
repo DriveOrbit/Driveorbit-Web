@@ -12,6 +12,12 @@ export interface MaintenanceLog {
   };
 }
 
+export interface VehicleInsurance {
+  provider: string;
+  policyNumber: string;
+  expiryDate: string;
+}
+
 export interface Vehicle {
   id: string;
   name: string;
@@ -25,6 +31,17 @@ export interface Vehicle {
   licensePlate: string;
   lastMaintenance: string;
   maintenanceLogs: MaintenanceLog[];
+  // Additional fields for detailed view
+  vin: string;
+  brand: string;
+  yearOfManufacture: number;
+  engineCapacity: string;
+  chassisNumber: string;
+  color: string;
+  insurance: VehicleInsurance;
+  emissionTestExpiry: string;
+  roadTaxExpiry: string;
+  registrationCertificate: string;
 }
 
 export interface FleetResponse {

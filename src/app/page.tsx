@@ -1,35 +1,20 @@
 'use client';
-
 import { useState } from 'react';
-import { Vehicle, MaintenanceLog as MaintenanceLogType } from'@/lib/types/fleet';
+import { Vehicle } from '@/lib/types/fleet';
+
 import { mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
+import { VehicleDetails } from '@/components/ui/vehicle-details';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { 
-  Sidebar, 
-  SidebarBody, 
-  SidebarLink, 
-  SidebarSection 
-} from "@/components/ui/sidebar";
-import {
-  IconDashboard,
-  IconCar,
-  IconUsersGroup,
-  IconSettings,
-  IconUser,
-  IconTool,
-  IconAlertTriangle
-} from "@tabler/icons-react";
-import RealTimeMap from "@/components/ui/RealTimeMap";
-import VehicleList from "@/components/ui/VehicleList";
 
 export default function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance' | 'dashboard' | 'vehicles' | 'drivers' | 'settings' | 'account' | 'service' | 'issues'>('overview');
+  const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance'>('overview');
+  const [showVehicleDetails, setShowVehicleDetails] = useState(false);
   
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
@@ -59,47 +44,19 @@ export default function Home() {
     }
   ];
 
+  const handleVehicleClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setShowVehicleDetails(true);
+  };
+
   const renderContent = () => {
     switch (activeSection) {
-      case 'dashboard':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            
-            {/* Side-by-side layout for map and vehicles */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Map takes up 2/3 of the space on larger screens */}
-              <div className="lg:col-span-2">
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
-                  <h2 className="text-lg font-semibold mb-2">Real-Time Vehicle Tracking</h2>
-                  <div className="h-[500px]">
-                    <RealTimeMap />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Vehicles list takes up 1/3 of the space */}
-              <div className="lg:col-span-1">
-                <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
-                  <VehicleList />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        );
-
       case 'overview':
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
               Fleet Management Overview
@@ -136,7 +93,6 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -163,14 +119,30 @@ export default function Home() {
           </motion.div>
         );
 
-      case 'vehicles':
       case 'registered':
+        if (showVehicleDetails && selectedVehicle) {
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <VehicleDetails
+                vehicle={selectedVehicle}
+                onClose={() => {
+                  setShowVehicleDetails(false);
+                  setSelectedVehicle(null);
+                }}
+              />
+            </motion.div>
+          );
+        }
+
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -179,36 +151,55 @@ export default function Home() {
                   Registered Vehicles
                 </h1>
               </div>
-              {activeSection === 'registered' && (
-                <button
-                  onClick={() => setActiveSection('overview')}
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  Back to Overview
-                </button>
-              )}
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
             </div>
             
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {mockVehicles.map((vehicle) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  onClick={setSelectedVehicle}
-                />
-              ))}
-            </div>
+            <Card className="p-6">
+              <div className="space-y-4">
+                {mockVehicles.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className="flex items-center justify-between p-4 hover:bg-accent rounded-lg cursor-pointer transition-colors"
+                    onClick={() => handleVehicleClick(vehicle)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium">ID: {vehicle.id}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {vehicle.brand} {vehicle.model}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-medium">{vehicle.type}</span>
+                      <span className={`px-3 py-1 rounded-full text-sm ${
+                        vehicle.status === 'Available' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                          : vehicle.status === 'Maintenance'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'
+                      }`}>
+                        {vehicle.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </motion.div>
         );
 
-      case 'service':
       case 'maintenance':
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -217,14 +208,12 @@ export default function Home() {
                   Maintenance Logs
                 </h1>
               </div>
-              {activeSection === 'maintenance' && (
-                <button
-                  onClick={() => setActiveSection('overview')}
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  Back to Overview
-                </button>
-              )}
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
             </div>
 
             <div className="space-y-8">
@@ -242,7 +231,7 @@ export default function Home() {
                   </div>
                   
                   <div className="grid gap-4">
-                    {vehicle.maintenanceLogs.map((log: MaintenanceLogType) => (
+                    {vehicle.maintenanceLogs.map((log) => (
                       <MaintenanceLog key={log.id} log={log} />
                     ))}
                   </div>
@@ -251,190 +240,20 @@ export default function Home() {
             </div>
           </motion.div>
         );
-        
-      case 'drivers':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Drivers Management
-            </h1>
-            <p>Driver management content will be displayed here.</p>
-          </motion.div>
-        );
-        
-      case 'settings':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Settings
-            </h1>
-            <p>Settings content will be displayed here.</p>
-          </motion.div>
-        );
-        
-      case 'account':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Account Management
-            </h1>
-            <p>Account management content will be displayed here.</p>
-          </motion.div>
-        );
-        
-      case 'issues':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Vehicle Issues
-            </h1>
-            <p>Vehicle issues and alerts will be displayed here.</p>
-          </motion.div>
-        );
-        
-      default:
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Content Not Found
-            </h1>
-            <p>The requested section could not be found.</p>
-          </motion.div>
-        );
     }
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-background">
-      {/* Sidebar */}
-      <Sidebar>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="mt-8 flex flex-col gap-2">
-              <SidebarLink
-                link={{
-                  label: "Dashboard",
-                  href: "#",
-                  icon: <IconDashboard className="h-5 w-5" />,
-                }}
-                active={activeSection === "dashboard"}
-                onClick={() => setActiveSection("dashboard")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Overview",
-                  href: "#",
-                  icon: <ClipboardList className="h-5 w-5" />,
-                }}
-                active={activeSection === "overview"}
-                onClick={() => setActiveSection("overview")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Vehicles",
-                  href: "#",
-                  icon: <IconCar className="h-5 w-5" />,
-                }}
-                active={activeSection === "vehicles"}
-                onClick={() => setActiveSection("vehicles")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Drivers",
-                  href: "#",
-                  icon: <IconUsersGroup className="h-5 w-5" />,
-                }}
-                active={activeSection === "drivers"}
-                onClick={() => setActiveSection("drivers")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Settings",
-                  href: "#",
-                  icon: <IconSettings className="h-5 w-5" />,
-                }}
-                active={activeSection === "settings"}
-                onClick={() => setActiveSection("settings")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Account",
-                  href: "#",
-                  icon: <IconUser className="h-5 w-5" />,
-                }}
-                active={activeSection === "account"}
-                onClick={() => setActiveSection("account")}
-              />
-            </div>
-            
-            {/* Maintenance Section with divider */}
-            <div className="border-t border-neutral-800 mx-3 my-4"></div>
-            
-            <div className="px-3">
-              <SidebarLink
-                link={{
-                  label: "Service Schedule",
-                  href: "#",
-                  icon: <IconTool className="h-5 w-5" />,
-                }}
-                active={activeSection === "service"}
-                onClick={() => setActiveSection("service")}
-                className="mb-2"
-              />
-              <SidebarLink
-                link={{
-                  label: "Issues",
-                  href: "#",
-                  icon: <IconAlertTriangle className="h-5 w-5" />,
-                }}
-                active={activeSection === "issues"}
-                onClick={() => setActiveSection("issues")}
-              />
-            </div>
-          </div>
-        </SidebarBody>
-      </Sidebar>
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+    <main className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {renderContent()}
-        
-        <VehicleDialog
-          vehicle={selectedVehicle}
-          open={!!selectedVehicle}
-          onOpenChange={(open) => !open && setSelectedVehicle(null)}
-        />
       </div>
-    </div>
+
+      <VehicleDialog
+        vehicle={selectedVehicle}
+        open={!!selectedVehicle && !showVehicleDetails}
+        onOpenChange={(open) => !open && setSelectedVehicle(null)}
+      />
+    </main>
   );
 }
