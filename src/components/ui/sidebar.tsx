@@ -75,11 +75,7 @@ export const Sidebar = ({
   );
 };
 
-export const Navbar = ({ 
-  className 
-}: { 
-  className?: string 
-}) => {
+export const Navbar = ({ className }: { className?: string }) => {
   const [notificationCount, setNotificationCount] = useState(3);
   
   return (
@@ -95,8 +91,6 @@ export const Navbar = ({
           )}
         </div>
         
-   
-        
         {/* Register Button */}
         <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
           Register
@@ -105,6 +99,7 @@ export const Navbar = ({
     </div>
   );
 };
+
 
 export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
   return (
