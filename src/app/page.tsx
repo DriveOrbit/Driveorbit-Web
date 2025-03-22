@@ -8,6 +8,8 @@ import { VehicleDialog } from '@/components/ui/vehicle-dialog';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Driver } from '@/lib/types/driver';
+
 import { Card } from '@/components/ui/card';
 import {
   Sidebar,
@@ -29,6 +31,7 @@ import VehicleList from "@/components/ui/VehicleList";
 import { Button } from '@/components/ui/button';
 import { DriverCard } from '@/components/ui/DriverCard';
 import { DriverDialog } from '@/components/ui/DriverDialog';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -37,6 +40,8 @@ export default function Home() {
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
   const maintenanceVehicles = mockVehicles.filter(v => v.status === 'Maintenance').length;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Driver[]>(mockDrivers);
 
   const sections = [
     {
@@ -61,6 +66,20 @@ export default function Home() {
       description: 'Vehicles under maintenance'
     }
   ];
+
+  // Function to handle search
+  const handleSearch = () => {
+    if (searchQuery.trim() === '') {
+      // If search query is empty, show all drivers
+      setSearchResults(mockDrivers);
+    } else {
+      // Filter drivers by ID
+      const results = mockDrivers.filter((driver) =>
+        driver.id.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    }
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -236,8 +255,8 @@ export default function Home() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">{vehicle.name}</h2>
                     <span className={`px-3 py-1 rounded-full text-sm ${vehicle.status === 'Maintenance'
-                        ? 'bg-destructive/10 text-destructive'
-                        : 'bg-primary/10 text-primary'
+                      ? 'bg-destructive/10 text-destructive'
+                      : 'bg-primary/10 text-primary'
                       }`}>
                       {vehicle.status}
                     </span>
@@ -254,35 +273,64 @@ export default function Home() {
           </motion.div>
         );
 
-      case 'drivers':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
-              <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {mockDrivers.map((driver) => (
-                <DriverCard key={driver.id} driver={driver} />
-              ))}
-            </div>
-
-            <DriverDialog
-              open={driverDialogOpen}
-              onOpenChange={setDriverDialogOpen}
-              onSave={(newDriver) => {
-                // Add logic to save the new driver (e.g., API call or state update)
-                console.log('New Driver:', newDriver);
-              }}
-            />
-          </motion.div>
-        );
+        case 'drivers':
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="p-6"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
+                <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
+              </div>
+        
+              {/* Search Input and Button */}
+              <div className="mb-6 flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search by Driver ID"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full md:w-1/2"
+                />
+                <Button onClick={handleSearch}>Search</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSearchResults(mockDrivers); // Reset to show all drivers
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+        
+              {/* Display Search Results */}
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {searchResults.length > 0 ? (
+                  searchResults.map((driver) => (
+                    <DriverCard key={driver.id} driver={driver} />
+                  ))
+                ) : (
+                  <div className="text-center text-muted-foreground py-6">
+                    No drivers found.
+                  </div>
+                )}
+              </div>
+        
+              {/* Driver Registration Dialog */}
+              <DriverDialog
+                open={driverDialogOpen}
+                onOpenChange={setDriverDialogOpen}
+                onSave={(newDriver) => {
+                  // Add logic to save the new driver (e.g., API call or state update)
+                  console.log('New Driver:', newDriver);
+                }}
+              />
+            </motion.div>
+          );
 
       case 'settings':
         return (
