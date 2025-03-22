@@ -1,5 +1,7 @@
 'use client';
+
 import { useState } from 'react';
+
 import { Vehicle } from '@/lib/types/fleet';
 
 import { mockVehicles } from '@/lib/mock-data';
@@ -175,17 +177,8 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div>
                       <span className="text-sm font-medium">{vehicle.type}</span>
-                      <span className={`px-3 py-1 rounded-full text-sm ${
-                        vehicle.status === 'Available' 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                          : vehicle.status === 'Maintenance'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'
-                      }`}>
-                        {vehicle.status}
-                      </span>
                     </div>
                   </div>
                 ))}

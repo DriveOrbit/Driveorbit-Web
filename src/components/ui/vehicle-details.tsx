@@ -1,10 +1,9 @@
-'use client';
+ 'use client';
 
 import { Vehicle } from '@/lib/types/fleet';
-
 import { Card } from './card';
-import { Separator } from './separator';
 import { format } from 'date-fns';
+import Image from 'next/image';
 
 interface VehicleDetailsProps {
   vehicle: Vehicle;
@@ -18,54 +17,66 @@ export function VehicleDetails({ vehicle, onClose }: VehicleDetailsProps) {
         <h2 className="text-2xl font-bold">{vehicle.name}</h2>
         <button
           onClick={onClose}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-sm text-primary hover:text-primary/80"
         >
           Back to List
         </button>
       </div>
 
       <Card className="p-6">
-        <h3 className="text-xl font-semibold mb-4">1. Vehicle Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">License Plate</p>
-            <p className="font-medium">{vehicle.licensePlate}</p>
+        <div className="flex gap-6">
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold mb-4">1. Vehicle Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">License Plate</p>
+                <p className="font-medium">{vehicle.licensePlate}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">VIN</p>
+                <p className="font-medium">{vehicle.vin}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Model</p>
+                <p className="font-medium">{vehicle.model}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Brand</p>
+                <p className="font-medium">{vehicle.brand}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Year of Manufacture</p>
+                <p className="font-medium">{vehicle.yearOfManufacture}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Vehicle Type</p>
+                <p className="font-medium">{vehicle.type}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Fuel Type</p>
+                <p className="font-medium">{vehicle.fuelType}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Engine Capacity</p>
+                <p className="font-medium">{vehicle.engineCapacity}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Chassis Number</p>
+                <p className="font-medium">{vehicle.chassisNumber}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Color</p>
+                <p className="font-medium">{vehicle.color}</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">VIN</p>
-            <p className="font-medium">{vehicle.vin}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Model</p>
-            <p className="font-medium">{vehicle.model}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Brand</p>
-            <p className="font-medium">{vehicle.brand}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Year of Manufacture</p>
-            <p className="font-medium">{vehicle.yearOfManufacture}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Vehicle Type</p>
-            <p className="font-medium">{vehicle.type}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Fuel Type</p>
-            <p className="font-medium">{vehicle.fuelType}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Engine Capacity</p>
-            <p className="font-medium">{vehicle.engineCapacity}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Chassis Number</p>
-            <p className="font-medium">{vehicle.chassisNumber}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Color</p>
-            <p className="font-medium">{vehicle.color}</p>
+          <div className="w-64 h-64 relative rounded-lg overflow-hidden">
+            <Image
+              src={vehicle.imageUrl}
+              alt={vehicle.name}
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
       </Card>
