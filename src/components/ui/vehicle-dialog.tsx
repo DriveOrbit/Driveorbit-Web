@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import { Vehicle } from '@/lib/types/fleet';
 import {
@@ -7,9 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { format } from 'date-fns';
 import Image from 'next/image';
-import { Badge } from './badge';
-import { Calendar, Fuel, Key, Users } from 'lucide-react';
 
 interface VehicleDialogProps {
   vehicle: Vehicle | null;
@@ -22,47 +21,52 @@ export function VehicleDialog({ vehicle, open, onOpenChange }: VehicleDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{vehicle.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="relative h-64 w-full mt-4">
-          <Image
-            src={vehicle.imageUrl}
-            alt={vehicle.name}
-            fill
-            className="object-cover rounded-md"
-          />
-        </div>
-
-        <div className="grid gap-4 mt-4">
-          <div className="flex flex-wrap gap-2">
-            {vehicle.features.map((feature) => (
-              <Badge key={feature} variant="secondary">
-                {feature}
-              </Badge>
-            ))}
+        <div className="grid gap-6">
+          <div className="relative h-64 rounded-lg overflow-hidden">
+            <Image
+              src={vehicle.imageUrl}
+              alt={vehicle.name}
+              fill
+              className="object-cover"
+            />
+            <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
+              vehicle.status === 'Available' 
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
+            }`}>
+              {vehicle.status}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Capacity: {vehicle.capacity}</span>
+            <div>
+              <p className="text-sm text-muted-foreground">License Plate</p>
+              <p className="font-medium">{vehicle.licensePlate}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Fuel className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Fuel: {vehicle.fuelType}</span>
+            <div>
+              <p className="text-sm text-muted-foreground">Year</p>
+              <p className="font-medium">{vehicle.yearOfManufacture}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Key className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">License: {vehicle.licensePlate}</span>
+            <div>
+              <p className="text-sm text-muted-foreground">Type</p>
+              <p className="font-medium">{vehicle.type}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">
-                Last Maintenance: {new Date(vehicle.lastMaintenance).toLocaleDateString()}
-              </span>
+            <div>
+              <p className="text-sm text-muted-foreground">Fuel Type</p>
+              <p className="font-medium">{vehicle.fuelType}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Last Maintenance</p>
+              <p className="font-medium">{format(new Date(vehicle.lastMaintenance), 'PPP')}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Capacity</p>
+              <p className="font-medium">{vehicle.capacity} passengers</p>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ export interface Vehicle {
   name: string;
   model: string;
   type: 'SUV' | 'Sedan' | 'Van' | 'Truck';
-  status: 'Available' | 'In Use' | 'Maintenance';
+  status: 'Available' | 'Booked' | 'Maintenance';
   imageUrl: string;
   features: string[];
   capacity: number;

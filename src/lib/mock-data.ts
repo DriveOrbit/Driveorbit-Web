@@ -1,6 +1,5 @@
 import { Vehicle } from '@/lib/types/fleet';
 
-
 export const mockVehicles: Vehicle[] = [
   {
     id: '1',
@@ -50,7 +49,7 @@ export const mockVehicles: Vehicle[] = [
     name: 'Range Rover Sport',
     model: '2024',
     type: 'SUV',
-    status: 'Available',
+    status: 'Booked',
     imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6',
     features: ['4x4', 'Leather Interior', 'Panoramic Roof'],
     capacity: 7,
@@ -188,5 +187,41 @@ export const mockVehicles: Vehicle[] = [
         nextDueDate: '2024-09-05'
       }
     ]
-  }
+  },
+  {
+    id: '6',
+    name: 'Range Rover Sport',
+    model: '2019',
+    type: 'SUV',
+    status: 'Available',
+    imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6',
+    features: ['4x4', 'Leather Interior', 'Panoramic Roof'],
+    capacity: 7,
+    fuelType: 'Hybrid',
+    licensePlate: 'SUV-2022',
+    lastMaintenance: '2023-02-15',
+    vin: 'RRS202401234227',
+    brand: 'Land Rover',
+    yearOfManufacture: 2019,
+    engineCapacity: '3000',
+    chassisNumber: 'CHE202406785',
+    color: 'Santorini Black',
+    insurance: {
+      provider: 'Luxury Auto Insurance',
+      policyNumber: 'POL-231937',
+      expiryDate: '2026-02-15'
+    },
+    emissionTestExpiry: '2025-02-15',
+    roadTaxExpiry: '2025-02-09',
+    registrationCertificate: 'RC-2019-004',
+    maintenanceLogs: [
+      {
+        id: '6-1',
+        date: '2019-02-15',
+        type: 'Echo Test',
+        description: 'Emissions test completed',
+        nextDueDate: '2026-02-15'
+      }
+    ]
+  },
 ];
