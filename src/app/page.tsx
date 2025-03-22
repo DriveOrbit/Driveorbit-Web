@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Vehicle, MaintenanceLog as MaintenanceLogType } from'@/lib/types/fleet';
+import { Vehicle, MaintenanceLog as MaintenanceLogType } from '@/lib/types/fleet';
 import { mockDrivers, mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
@@ -9,11 +9,11 @@ import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { 
-  Sidebar, 
-  SidebarBody, 
-  SidebarLink, 
-  SidebarSection 
+import {
+  Sidebar,
+  SidebarBody,
+  SidebarLink,
+  SidebarSection
 } from "@/components/ui/sidebar";
 import {
   IconDashboard,
@@ -73,7 +73,7 @@ export default function Home() {
             className="p-6"
           >
             <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            
+
             {/* Side-by-side layout for map and vehicles */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Map takes up 2/3 of the space on larger screens */}
@@ -85,7 +85,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Vehicles list takes up 1/3 of the space */}
               <div className="lg:col-span-1">
                 <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
@@ -107,7 +107,7 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
               Fleet Management Overview
             </h1>
-            
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sections.map((section) => (
                 <Card
@@ -153,7 +153,7 @@ export default function Home() {
                 Back to Overview
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {availableVehicles.map((vehicle) => (
                 <VehicleCard
@@ -191,7 +191,7 @@ export default function Home() {
                 </button>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {mockVehicles.map((vehicle) => (
                 <VehicleCard
@@ -235,15 +235,14 @@ export default function Home() {
                 <div key={vehicle.id} className="border rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">{vehicle.name}</h2>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      vehicle.status === 'Maintenance' 
-                        ? 'bg-destructive/10 text-destructive' 
+                    <span className={`px-3 py-1 rounded-full text-sm ${vehicle.status === 'Maintenance'
+                        ? 'bg-destructive/10 text-destructive'
                         : 'bg-primary/10 text-primary'
-                    }`}>
+                      }`}>
                       {vehicle.status}
                     </span>
                   </div>
-                  
+
                   <div className="grid gap-4">
                     {vehicle.maintenanceLogs.map((log: MaintenanceLogType) => (
                       <MaintenanceLog key={log.id} log={log} />
@@ -254,37 +253,37 @@ export default function Home() {
             </div>
           </motion.div>
         );
-        
-        case 'drivers':
-          return (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="p-6"
-            >
-              <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
-                <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
-              </div>
-        
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {mockDrivers.map((driver) => (
-                  <DriverCard key={driver.id} driver={driver} />
-                ))}
-              </div>
-        
-              <DriverDialog
-                open={driverDialogOpen}
-                onOpenChange={setDriverDialogOpen}
-                onSave={(newDriver: any) => {
-                  // Add logic to save the new driver (e.g., API call or state update)
-                  console.log('New Driver:', newDriver);
-                }}
-              />
-            </motion.div>
-          );
-        
+
+      case 'drivers':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
+              <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {mockDrivers.map((driver) => (
+                <DriverCard key={driver.id} driver={driver} />
+              ))}
+            </div>
+
+            <DriverDialog
+              open={driverDialogOpen}
+              onOpenChange={setDriverDialogOpen}
+              onSave={(newDriver) => {
+                // Add logic to save the new driver (e.g., API call or state update)
+                console.log('New Driver:', newDriver);
+              }}
+            />
+          </motion.div>
+        );
+
       case 'settings':
         return (
           <motion.div
@@ -299,7 +298,7 @@ export default function Home() {
             <p>Settings content will be displayed here.</p>
           </motion.div>
         );
-        
+
       case 'account':
         return (
           <motion.div
@@ -314,7 +313,7 @@ export default function Home() {
             <p>Account management content will be displayed here.</p>
           </motion.div>
         );
-        
+
       case 'issues':
         return (
           <motion.div
@@ -329,7 +328,7 @@ export default function Home() {
             <p>Vehicle issues and alerts will be displayed here.</p>
           </motion.div>
         );
-        
+
       default:
         return (
           <motion.div
@@ -414,10 +413,10 @@ export default function Home() {
                 onClick={() => setActiveSection("account")}
               />
             </div>
-            
+
             {/* Maintenance Section with divider */}
             <div className="border-t border-neutral-800 mx-3 my-4"></div>
-            
+
             <div className="px-3">
               <SidebarLink
                 link={{
@@ -446,7 +445,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         {renderContent()}
-        
+
         <VehicleDialog
           vehicle={selectedVehicle}
           open={!!selectedVehicle}
