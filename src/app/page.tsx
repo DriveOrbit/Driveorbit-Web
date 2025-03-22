@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Vehicle, MaintenanceLog as MaintenanceLogType } from'@/lib/types/fleet';
-import { mockVehicles } from '@/lib/mock-data';
+import { mockDrivers, mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
@@ -26,11 +26,14 @@ import {
 } from "@tabler/icons-react";
 import RealTimeMap from "@/components/ui/RealTimeMap";
 import VehicleList from "@/components/ui/VehicleList";
+import { Button } from '@/components/ui/button';
+import { DriverCard } from '@/components/ui/DriverCard';
+import { DriverDialog } from '@/components/ui/DriverDialog';
 
 export default function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance' | 'dashboard' | 'vehicles' | 'drivers' | 'settings' | 'account' | 'service' | 'issues'>('overview');
-  
+  const [driverDialogOpen, setDriverDialogOpen] = useState(false);
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
   const maintenanceVehicles = mockVehicles.filter(v => v.status === 'Maintenance').length;
@@ -252,20 +255,35 @@ export default function Home() {
           </motion.div>
         );
         
-      case 'drivers':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6"
-          >
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-              Drivers Management
-            </h1>
-            <p>Driver management content will be displayed here.</p>
-          </motion.div>
-        );
+        case 'drivers':
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="p-6"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
+                <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
+              </div>
+        
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {mockDrivers.map((driver) => (
+                  <DriverCard key={driver.id} driver={driver} />
+                ))}
+              </div>
+        
+              <DriverDialog
+                open={driverDialogOpen}
+                onOpenChange={setDriverDialogOpen}
+                onSave={(newDriver: any) => {
+                  // Add logic to save the new driver (e.g., API call or state update)
+                  console.log('New Driver:', newDriver);
+                }}
+              />
+            </motion.div>
+          );
         
       case 'settings':
         return (

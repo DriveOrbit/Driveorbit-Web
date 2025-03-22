@@ -1,4 +1,5 @@
-import { Vehicle } from '@/types/fleet';
+import { Vehicle } from '@/lib/types/fleet';
+import { Driver } from '@/lib/types/driver';
 
 export const mockVehicles: Vehicle[] = [
   {
@@ -253,4 +254,21 @@ export const mockVehicles: Vehicle[] = [
       }
     ]
   }
+];
+
+export const mockDrivers: Driver[] = [
+  {
+    id: '1',
+    fullName: 'John Doe',
+    nic: '123456789V',
+    address: '123 Main St, City',
+    photoUrl: '/images/drivers/driver1.jpg',
+  },
+  {
+    id: '2',
+    fullName: 'Jane Smith',
+    nic: '987654321V',
+    address: '456 Elm St, Town',
+    photoUrl: '/images/drivers/driver2.jpg',
+  },
 ];
