@@ -14,6 +14,20 @@ export const mockVehicles: Vehicle[] = [
     fuelType: 'Electric',
     licensePlate: 'EV-2023',
     lastMaintenance: '2024-03-01',
+    vin: 'TSLA202301234567',
+    brand: 'Tesla',
+    yearOfManufacture: 2023,
+    engineCapacity: 'N/A',
+    chassisNumber: 'CHS202301234',
+    color: 'Pearl White',
+    insurance: {
+      provider: 'EV Insurance Co',
+      policyNumber: 'POL-123456',
+      expiryDate: '2025-03-01'
+    },
+    emissionTestExpiry: 'N/A',
+    roadTaxExpiry: '2025-01-15',
+    registrationCertificate: 'RC-2023-001',
     maintenanceLogs: [
       {
         id: '1-1',
@@ -36,13 +50,27 @@ export const mockVehicles: Vehicle[] = [
     name: 'Range Rover Sport',
     model: '2024',
     type: 'SUV',
-    status: 'Available',
+    status: 'Booked',
     imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6',
     features: ['4x4', 'Leather Interior', 'Panoramic Roof'],
     capacity: 7,
     fuelType: 'Hybrid',
     licensePlate: 'SUV-2024',
     lastMaintenance: '2024-02-15',
+    vin: 'RRS202401234567',
+    brand: 'Land Rover',
+    yearOfManufacture: 2024,
+    engineCapacity: '3000',
+    chassisNumber: 'CHS202402345',
+    color: 'Santorini Black',
+    insurance: {
+      provider: 'Luxury Auto Insurance',
+      policyNumber: 'POL-234567',
+      expiryDate: '2025-02-15'
+    },
+    emissionTestExpiry: '2025-02-15',
+    roadTaxExpiry: '2025-01-15',
+    registrationCertificate: 'RC-2024-002',
     maintenanceLogs: [
       {
         id: '2-1',
@@ -65,46 +93,32 @@ export const mockVehicles: Vehicle[] = [
     fuelType: 'Diesel',
     licensePlate: 'VAN-2023',
     lastMaintenance: '2024-03-10',
+    vin: 'MBVN202301234567',
+    brand: 'Mercedes-Benz',
+    yearOfManufacture: 2023,
+    engineCapacity: '2200',
+    chassisNumber: 'CHS202303456',
+    color: 'Arctic White',
+    insurance: {
+      provider: 'Commercial Fleet Insurance',
+      policyNumber: 'POL-345678',
+      expiryDate: '2025-03-10'
+    },
+    emissionTestExpiry: '2025-03-10',
+    roadTaxExpiry: '2025-02-28',
+    registrationCertificate: 'RC-2023-003',
     maintenanceLogs: [
       {
         id: '3-1',
         date: '2024-03-10',
         type: 'Part Replacement',
         description: 'Brake system replacement',
-        nextDueDate: '2024-03-15',
-        cost: 1200,
-        partDetails: {
-          name: 'Brake System',
-          serialNumber: 'BRK-2024-001',
-          warranty: '2 years'
-        }
+        nextDueDate: '2024-03-15'
       }
     ]
   },
   {
     id: '4',
-    name: 'BMW 7 Series',
-    model: '2024',
-    type: 'Sedan',
-    status: 'Available',
-    imageUrl: 'https://images.unsplash.com/photo-1523983254932-c7e6571c9d60',
-    features: ['Executive Package', 'Massage Seats', 'Night Vision'],
-    capacity: 5,
-    fuelType: 'Hybrid',
-    licensePlate: 'LUX-2024',
-    lastMaintenance: '2024-01-20',
-    maintenanceLogs: [
-      {
-        id: '4-1',
-        date: '2024-01-20',
-        type: 'Regular Service',
-        description: 'Scheduled maintenance and software update',
-        nextDueDate: '2024-07-20'
-      }
-    ]
-  },
-  {
-    id: '5',
     name: 'Ford F-150 Lightning',
     model: '2024',
     type: 'Truck',
@@ -115,9 +129,23 @@ export const mockVehicles: Vehicle[] = [
     fuelType: 'Electric',
     licensePlate: 'TRK-2024',
     lastMaintenance: '2024-02-28',
+    vin: 'FORD202401234567',
+    brand: 'Ford',
+    yearOfManufacture: 2024,
+    engineCapacity: 'N/A',
+    chassisNumber: 'CHS202404567',
+    color: 'Antimatter Blue',
+    insurance: {
+      provider: 'EV Fleet Insurance',
+      policyNumber: 'POL-456789',
+      expiryDate: '2025-02-28'
+    },
+    emissionTestExpiry: 'N/A',
+    roadTaxExpiry: '2025-02-28',
+    registrationCertificate: 'RC-2024-004',
     maintenanceLogs: [
       {
-        id: '5-1',
+        id: '4-1',
         date: '2024-02-28',
         type: 'Regular Service',
         description: 'Battery system check',
@@ -126,52 +154,74 @@ export const mockVehicles: Vehicle[] = [
     ]
   },
   {
-    id: '6',
-    name: 'Toyota Sienna',
+    id: '5',
+    name: 'BMW iX',
     model: '2024',
-    type: 'Van',
-    status: 'Maintenance',
-    imageUrl: 'https://images.unsplash.com/photo-1619767886558-efdc259b6e09',
-    features: ['Hybrid', 'Family Package', 'Entertainment System'],
-    capacity: 8,
-    fuelType: 'Hybrid',
-    licensePlate: 'VAN-2024',
+    type: 'SUV',
+    status: 'Available',
+    imageUrl: 'https://images.unsplash.com/photo-1655412642160-3c11eadf4c32',
+    features: ['Electric', 'Panoramic Sky Lounge', 'Driving Assistant Pro'],
+    capacity: 5,
+    fuelType: 'Electric',
+    licensePlate: 'EV-2024',
     lastMaintenance: '2024-03-05',
+    vin: 'BMW202401234567',
+    brand: 'BMW',
+    yearOfManufacture: 2024,
+    engineCapacity: 'N/A',
+    chassisNumber: 'CHS202405678',
+    color: 'Mineral White',
+    insurance: {
+      provider: 'Premium Auto Insurance',
+      policyNumber: 'POL-567890',
+      expiryDate: '2025-03-05'
+    },
+    emissionTestExpiry: 'N/A',
+    roadTaxExpiry: '2025-03-05',
+    registrationCertificate: 'RC-2024-005',
     maintenanceLogs: [
       {
-        id: '6-1',
+        id: '5-1',
         date: '2024-03-05',
-        type: 'Part Replacement',
-        description: 'Hybrid battery replacement',
-        nextDueDate: '2024-03-20',
-        cost: 3500,
-        partDetails: {
-          name: 'Hybrid Battery Pack',
-          serialNumber: 'HBP-2024-002',
-          warranty: '8 years'
-        }
+        type: 'Regular Service',
+        description: 'Software update and system check',
+        nextDueDate: '2024-09-05'
       }
     ]
   },
   {
-    id: '7',
-    name: 'Porsche Taycan',
-    model: '2024',
-    type: 'Sedan',
+    id: '6',
+    name: 'Range Rover Sport',
+    model: '2019',
+    type: 'SUV',
     status: 'Available',
-    imageUrl: 'https://images.unsplash.com/photo-1614200187524-dc4b892acf16',
-    features: ['Performance Package', 'Electric', 'Premium Audio'],
-    capacity: 4,
-    fuelType: 'Electric',
-    licensePlate: 'SPT-2024',
-    lastMaintenance: '2024-02-10',
+    imageUrl: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6',
+    features: ['4x4', 'Leather Interior', 'Panoramic Roof'],
+    capacity: 7,
+    fuelType: 'Hybrid',
+    licensePlate: 'SUV-2022',
+    lastMaintenance: '2023-02-15',
+    vin: 'RRS202401234227',
+    brand: 'Land Rover',
+    yearOfManufacture: 2019,
+    engineCapacity: '3000',
+    chassisNumber: 'CHE202406785',
+    color: 'Santorini Black',
+    insurance: {
+      provider: 'Luxury Auto Insurance',
+      policyNumber: 'POL-231937',
+      expiryDate: '2026-02-15'
+    },
+    emissionTestExpiry: '2025-02-15',
+    roadTaxExpiry: '2025-02-09',
+    registrationCertificate: 'RC-2019-004',
     maintenanceLogs: [
       {
-        id: '7-1',
-        date: '2024-02-10',
+        id: '6-1',
+        date: '2019-02-15',
         type: 'Echo Test',
-        description: 'Electric system certification',
-        nextDueDate: '2025-02-10'
+        description: 'Emissions test completed',
+        nextDueDate: '2026-02-15'
       }
     ]
   },
@@ -187,6 +237,20 @@ export const mockVehicles: Vehicle[] = [
     fuelType: 'Electric',
     licensePlate: 'EQS-2024',
     lastMaintenance: '2024-03-12',
+    vin: 'MBEQ202401234567',
+    brand: 'Mercedes-Benz',
+    yearOfManufacture: 2024,
+    engineCapacity: 'N/A',
+    chassisNumber: 'CHS202408901',
+    color: 'Obsidian Black',
+    insurance: {
+      provider: 'Luxury Auto Insurance',
+      policyNumber: 'POL-890123',
+      expiryDate: '2025-03-12'
+    },
+    emissionTestExpiry: 'N/A',
+    roadTaxExpiry: '2025-03-12',
+    registrationCertificate: 'RC-2024-008',
     maintenanceLogs: [
       {
         id: '8-1',
@@ -208,7 +272,7 @@ export const mockVehicles: Vehicle[] = [
     name: 'Rivian R1S',
     model: '2024',
     type: 'SUV',
-    status: 'In Use',
+    status: 'Available' | 'Booked' | 'Maintenance' | 'In Use',
     imageUrl: 'https://images.unsplash.com/photo-1666919643134-d97687c1826c',
     features: ['Adventure Package', 'Electric', 'Off-road Capability'],
     capacity: 7,
@@ -237,6 +301,20 @@ export const mockVehicles: Vehicle[] = [
     fuelType: 'Hybrid',
     licensePlate: 'VOL-2024',
     lastMaintenance: '2024-01-15',
+    vin: 'VOLVO202401234567',
+    brand: 'Volvo',
+    yearOfManufacture: 2024,
+    engineCapacity: '2000',
+    chassisNumber: 'CHS202406789',
+    color: 'Crystal White',
+    insurance: {
+      provider: 'Premium Auto Insurance',
+      policyNumber: 'POL-678901',
+      expiryDate: '2025-01-15'
+    },
+    emissionTestExpiry: '2025-01-15',
+    roadTaxExpiry: '2025-01-15',
+    registrationCertificate: 'RC-2024-010',
     maintenanceLogs: [
       {
         id: '10-1',

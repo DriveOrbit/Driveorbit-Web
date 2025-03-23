@@ -5,6 +5,7 @@ import { Vehicle, MaintenanceLog as MaintenanceLogType } from '@/lib/types/fleet
 import { mockDrivers, mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
+import { VehicleDetails } from '@/components/ui/vehicle-details';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -42,6 +43,8 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance' | 'dashboard' | 'vehicles' | 'drivers' | 'settings' | 'account' | 'service' | 'issues' | 'notifications'>('dashboard');
   const [notificationCount, setNotificationCount] = useState(3);
   const [driverDialogOpen, setDriverDialogOpen] = useState(false);
+  const [showVehicleDetails, setShowVehicleDetails] = useState(false);
+  
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
   const maintenanceVehicles = mockVehicles.filter(v => v.status === 'Maintenance').length;
@@ -72,7 +75,6 @@ export default function Home() {
     }
   ];
 
-  // Function to handle search
   const handleSearch = () => {
     if (searchQuery.trim() === '') {
       setSearchResults(mockDrivers);
@@ -82,6 +84,11 @@ export default function Home() {
       );
       setSearchResults(results);
     }
+  };
+
+  const handleVehicleClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setShowVehicleDetails(true);
   };
 
   const renderContent = () => {
@@ -201,7 +208,6 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
               Fleet Management Overview
@@ -238,7 +244,6 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -265,14 +270,30 @@ export default function Home() {
           </motion.div>
         );
 
-      case 'vehicles':
       case 'registered':
+        if (showVehicleDetails && selectedVehicle) {
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <VehicleDetails
+                vehicle={selectedVehicle}
+                onClose={() => {
+                  setShowVehicleDetails(false);
+                  setSelectedVehicle(null);
+                }}
+              />
+            </motion.div>
+          );
+        }
+
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -281,36 +302,46 @@ export default function Home() {
                   Registered Vehicles
                 </h1>
               </div>
-              {activeSection === 'registered' && (
-                <button
-                  onClick={() => setActiveSection('overview')}
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  Back to Overview
-                </button>
-              )}
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
             </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {mockVehicles.map((vehicle) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  onClick={setSelectedVehicle}
-                />
-              ))}
-            </div>
+            
+            <Card className="p-6">
+              <div className="space-y-4">
+                {mockVehicles.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className="flex items-center justify-between p-4 hover:bg-accent rounded-lg cursor-pointer transition-colors"
+                    onClick={() => handleVehicleClick(vehicle)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium">ID: {vehicle.id}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {vehicle.brand} {vehicle.model}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium">{vehicle.type}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </motion.div>
         );
 
-      case 'service':
       case 'maintenance':
         return (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -319,14 +350,12 @@ export default function Home() {
                   Maintenance Logs
                 </h1>
               </div>
-              {activeSection === 'maintenance' && (
-                <button
-                  onClick={() => setActiveSection('overview')}
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  Back to Overview
-                </button>
-              )}
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
             </div>
 
             <div className="space-y-8">
@@ -343,7 +372,7 @@ export default function Home() {
                   </div>
 
                   <div className="grid gap-4">
-                    {vehicle.maintenanceLogs.map((log: MaintenanceLogType) => (
+                    {vehicle.maintenanceLogs.map((log) => (
                       <MaintenanceLog key={log.id} log={log} />
                     ))}
                   </div>
@@ -522,7 +551,7 @@ export default function Home() {
         {renderContent()}
         <VehicleDialog
           vehicle={selectedVehicle}
-          open={!!selectedVehicle}
+          open={!!selectedVehicle && !showVehicleDetails}
           onOpenChange={(open) => !open && setSelectedVehicle(null)}
         />
       </div>
@@ -540,4 +569,3 @@ export default function Home() {
     </div>
   );
 }
-
