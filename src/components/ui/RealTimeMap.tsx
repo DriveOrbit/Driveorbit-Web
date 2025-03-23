@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import { IconSearch, IconFilter, IconCar } from '@tabler/icons-react';
+import { IconSearch, IconFilter, IconCar, IconX } from '@tabler/icons-react';
 import mockData from '@/lib/types/vehicledata';
 
 // Updated vehicle interface to match the latest modifications
@@ -31,6 +31,9 @@ export default function RealTimeMap() {
   const [filteredVehicles, setFilteredVehicles] = useState<VehicleData[]>(mockData.FIXED_VEHICLES);
   const markersRef = useRef<{ [key: string]: google.maps.Marker }>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [isValidInput, setIsValidInput] = useState(true);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -138,18 +141,73 @@ export default function RealTimeMap() {
     `;
   };
 
+  const validateVehicleNumber = (input: string): boolean => {
+    // Common Sri Lankan vehicle number patterns: 
+    // Like ABC-1234, AB-1234, CAB-1234, 30-1234, etc.
+    const regex = /^[a-zA-Z0-9-]*$/;
+    return regex.test(input);
+  };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+    const query = e.target.value.trim();
     setSearchQuery(query);
 
-    if (query === '' || /^[a-zA-Z0-9]+$/.test(query)) {
-      const filtered = vehicles.filter(vehicle =>
+    // Validate input
+    const isValid = validateVehicleNumber(query);
+    setIsValidInput(isValid);
+
+    if (!isValid) {
+      // If invalid, don't update filtered vehicles
+      return;
+    }
+
+    // Filter vehicles and generate suggestions
+    if (query === '') {
+      setFilteredVehicles(vehicles);
+      setSuggestions([]);
+      setShowSuggestions(false);
+    } else {
+      // For suggestions, we use a more relaxed matching to help users
+      const matchingVehicles = vehicles.filter(vehicle =>
         vehicle.id.toLowerCase().includes(query.toLowerCase())
       );
-      setFilteredVehicles(filtered);
-    } else {
-      alert('Invalid input. Please enter a valid vehicle number.');
-      setFilteredVehicles([]);
+      
+      setFilteredVehicles(matchingVehicles);
+      
+      // Generate suggestions based on current vehicles
+      const suggestedIds = matchingVehicles
+        .map(v => v.id)
+        .slice(0, 5); // Limit to 5 suggestions
+      
+      setSuggestions(suggestedIds);
+      setShowSuggestions(suggestedIds.length > 0);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setFilteredVehicles(vehicles.filter(v => v.id === suggestion));
+    setShowSuggestions(false);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setFilteredVehicles(vehicles);
+    setIsValidInput(true);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  const focusOnVehicle = (vehicleId: string) => {
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+    if (vehicle && map && markersRef.current[vehicleId]) {
+      map.panTo(vehicle.position);
+      map.setZoom(15);
+      
+      if (infoWindow) {
+        infoWindow.setContent(createInfoWindowContent(vehicle));
+        infoWindow.open(map, markersRef.current[vehicleId]);
+      }
     }
   };
 
@@ -159,14 +217,76 @@ export default function RealTimeMap() {
         <div className="relative">
           <input
             type="text"
-            placeholder="Search vehicles..."
-            className="pl-8 pr-4 py-1 rounded-md bg-neutral-700 text-white text-sm w-64 focus:outline-none focus:ring-1 focus:ring-green-500"
+            placeholder="Search vehicles by number..."
+            className={`pl-8 pr-10 py-2 rounded-md bg-neutral-700 text-white text-sm w-64 focus:outline-none focus:ring-1 ${
+              isValidInput ? 'focus:ring-green-500' : 'focus:ring-red-500 border border-red-500'
+            }`}
             value={searchQuery}
             onChange={handleSearchChange}
+            onFocus={() => {
+              if (suggestions.length > 0) setShowSuggestions(true);
+            }}
           />
           <IconSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
+          
+          {searchQuery && (
+            <button 
+              onClick={handleClearSearch}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-white p-1 rounded-full"
+            >
+              <IconX className="w-4 h-4" />
+            </button>
+          )}
+          
+          {!isValidInput && (
+            <p className="absolute text-red-500 text-xs mt-1">Please enter a valid vehicle number</p>
+          )}
+          
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute z-50 mt-1 w-64 bg-neutral-800 border border-neutral-700 rounded-md shadow-lg">
+              {suggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="px-4 py-2 hover:bg-neutral-700 cursor-pointer flex items-center"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <IconCar className="mr-2 text-green-500 w-4 h-4" />
+                  <span>{suggestion}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+        
+        {filteredVehicles.length === 0 && searchQuery && isValidInput && (
+          <div className="text-amber-400 text-sm ml-2">
+            No vehicles matching "{searchQuery}"
+          </div>
+        )}
       </div>
+
+      {filteredVehicles.length > 0 && searchQuery && (
+        <div className="mb-4 p-2 bg-neutral-800 rounded-md">
+          <p className="text-white text-sm mb-2">Found {filteredVehicles.length} vehicle(s):</p>
+          <div className="flex flex-wrap gap-2">
+            {filteredVehicles.slice(0, 5).map((vehicle) => (
+              <button
+                key={vehicle.id}
+                onClick={() => focusOnVehicle(vehicle.id)}
+                className="px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-md text-white text-xs flex items-center"
+              >
+                <IconCar className="mr-1 w-3 h-3" />
+                {vehicle.id}
+              </button>
+            ))}
+            {filteredVehicles.length > 5 && (
+              <span className="text-neutral-400 text-xs flex items-center">
+                +{filteredVehicles.length - 5} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="relative flex-grow">
         <div className="absolute inset-0" ref={mapRef}></div>
