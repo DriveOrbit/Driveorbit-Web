@@ -1,21 +1,20 @@
 'use client';
 
-
-
 import { useState } from 'react';
 import { Vehicle, MaintenanceLog as MaintenanceLogType } from '@/lib/types/fleet';
-import { mockVehicles } from '@/lib/mock-data';
+import { mockDrivers, mockVehicles } from '@/lib/mock-data';
 import { VehicleCard } from '@/components/ui/vehicle-card';
 import { VehicleDialog } from '@/components/ui/vehicle-dialog';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Driver } from '@/lib/types/driver';
 import { Card } from '@/components/ui/card';
-import { 
-  Sidebar, 
-  SidebarBody, 
-  SidebarLink, 
-  SidebarSection 
+import {
+  Sidebar,
+  SidebarBody,
+  SidebarLink,
+  SidebarSection
 } from "@/components/ui/sidebar";
 import {
   IconDashboard,
@@ -33,15 +32,21 @@ import Link from "next/link";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotificationManager from '@/components/ui/notification-manager';
+import { Button } from '@/components/ui/button';
+import { DriverCard } from '@/components/ui/DriverCard';
+import { DriverDialog } from '@/components/ui/DriverDialog';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance' | 'dashboard' | 'vehicles' | 'drivers' | 'settings' | 'account' | 'service' | 'issues' | 'notifications'>('dashboard'); // Changed to dashboard
+  const [activeSection, setActiveSection] = useState<'overview' | 'fleet' | 'registered' | 'maintenance' | 'dashboard' | 'vehicles' | 'drivers' | 'settings' | 'account' | 'service' | 'issues' | 'notifications'>('dashboard');
   const [notificationCount, setNotificationCount] = useState(3);
-  
+  const [driverDialogOpen, setDriverDialogOpen] = useState(false);
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
   const maintenanceVehicles = mockVehicles.filter(v => v.status === 'Maintenance').length;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Driver[]>(mockDrivers);
 
   const sections = [
     {
@@ -67,6 +72,18 @@ export default function Home() {
     }
   ];
 
+  // Function to handle search
+  const handleSearch = () => {
+    if (searchQuery.trim() === '') {
+      setSearchResults(mockDrivers);
+    } else {
+      const results = mockDrivers.filter((driver) =>
+        driver.id.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    }
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -79,10 +96,7 @@ export default function Home() {
           >
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold">Dashboard</h1>
-              
-              {/* Notification and Register button */}
               <div className="flex items-center gap-4">
-                {/* Notification Bell with Alert */}
                 <div className="relative">
                   <IconBell className="h-6 w-6 text-neutral-600 dark:text-neutral-300 cursor-pointer hover:text-neutral-800 dark:hover:text-neutral-100 transition-colors" />
                   {notificationCount > 0 && (
@@ -91,17 +105,12 @@ export default function Home() {
                     </div>
                   )}
                 </div>
-                
-                {/* Register Button */}
                 <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
                   Register
                 </Link>
               </div>
             </div>
-            
-            {/* Side-by-side layout for map and vehicles */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Map takes up 2/3 of the space on larger screens */}
               <div className="lg:col-span-2">
                 <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
                   <h2 className="text-lg font-semibold mb-2">Real-Time Vehicle Tracking</h2>
@@ -110,8 +119,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              
-              {/* Vehicles list takes up 1/3 of the space */}
               <div className="lg:col-span-1">
                 <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow h-full">
                   <VehicleList />
@@ -121,25 +128,72 @@ export default function Home() {
           </motion.div>
         );
 
-        
+      case 'notifications':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
+              Notification Center
+            </h1>
+            <NotificationManager />
+          </motion.div>
+        );
 
-
-
-
-  case 'notifications':
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="p-6"
-    >
-      <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
-        Notification Center
-      </h1>
-      <NotificationManager />
-    </motion.div>
-  );
+      case 'drivers':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Drivers Management</h1>
+              <Button onClick={() => setDriverDialogOpen(true)}>Register Driver</Button>
+            </div>
+            <div className="mb-6 flex gap-2">
+              <Input
+                type="text"
+                placeholder="Search by Driver ID"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full md:w-1/2"
+              />
+              <Button onClick={handleSearch}>Search</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSearchResults(mockDrivers);
+                }}
+              >
+                Clear
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {searchResults.length > 0 ? (
+                searchResults.map((driver) => (
+                  <DriverCard key={driver.id} driver={driver} />
+                ))
+              ) : (
+                <div className="text-center text-muted-foreground py-6">
+                  No drivers found.
+                </div>
+              )}
+            </div>
+            <DriverDialog
+              open={driverDialogOpen}
+              onOpenChange={setDriverDialogOpen}
+              onSave={(newDriver) => {
+                console.log('New Driver:', newDriver);
+              }}
+            />
+          </motion.div>
+        );
 
       case 'overview':
         return (
@@ -152,7 +206,7 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
               Fleet Management Overview
             </h1>
-            
+
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sections.map((section) => (
                 <Card
@@ -178,8 +232,171 @@ export default function Home() {
           </motion.div>
         );
 
-      // Other case statements remain the same
-      // ...
+      case 'fleet':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Car className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Today's Fleet</h1>
+              </div>
+              <button
+                onClick={() => setActiveSection('overview')}
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Back to Overview
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {availableVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onClick={setSelectedVehicle}
+                />
+              ))}
+            </div>
+          </motion.div>
+        );
+
+      case 'vehicles':
+      case 'registered':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <ClipboardList className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  Registered Vehicles
+                </h1>
+              </div>
+              {activeSection === 'registered' && (
+                <button
+                  onClick={() => setActiveSection('overview')}
+                  className="text-sm text-primary hover:text-primary/80"
+                >
+                  Back to Overview
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {mockVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onClick={setSelectedVehicle}
+                />
+              ))}
+            </div>
+          </motion.div>
+        );
+
+      case 'service':
+      case 'maintenance':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Wrench className="h-8 w-8 text-primary" />
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  Maintenance Logs
+                </h1>
+              </div>
+              {activeSection === 'maintenance' && (
+                <button
+                  onClick={() => setActiveSection('overview')}
+                  className="text-sm text-primary hover:text-primary/80"
+                >
+                  Back to Overview
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-8">
+              {mockVehicles.map((vehicle) => (
+                <div key={vehicle.id} className="border rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">{vehicle.name}</h2>
+                    <span className={`px-3 py-1 rounded-full text-sm ${vehicle.status === 'Maintenance'
+                      ? 'bg-destructive/10 text-destructive'
+                      : 'bg-primary/10 text-primary'
+                      }`}>
+                      {vehicle.status}
+                    </span>
+                  </div>
+
+                  <div className="grid gap-4">
+                    {vehicle.maintenanceLogs.map((log: MaintenanceLogType) => (
+                      <MaintenanceLog key={log.id} log={log} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+
+      case 'settings':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
+              Settings
+            </h1>
+            <p>Settings content will be displayed here.</p>
+          </motion.div>
+        );
+
+      case 'account':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
+              Account Management
+            </h1>
+            <p>Account management content will be displayed here.</p>
+          </motion.div>
+        );
+
+      case 'issues':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-6"
+          >
+            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-8">
+              Vehicle Issues
+            </h1>
+            <p>Vehicle issues and alerts will be displayed here.</p>
+          </motion.div>
+        );
 
       default:
         return (
@@ -198,146 +415,129 @@ export default function Home() {
     }
   };
 
-  function setShowNotifications(arg0: boolean): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header - Visible on all screen sizes */}
-      
-        
-          
-        
-
-      <div className="flex-1 flex md:flex-row overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar>
-          <SidebarBody className="justify-between gap-10">
-            <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-              <div className="mt-8 flex flex-col gap-2">
-                <SidebarLink
-                  link={{
-                    label: "Dashboard",
-                    href: "#",
-                    icon: <IconDashboard className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "dashboard"}
-                  onClick={() => setActiveSection("dashboard")}
-                  className="mb-2"
-                />
-                <SidebarLink
-                  link={{
-                    label: "Overview",
-                    href: "#",
-                    icon: <ClipboardList className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "overview"}
-                  onClick={() => setActiveSection("overview")}
-                  className="mb-2"
-                />
-                <SidebarLink
-                  link={{
-                    label: "Vehicles",
-                    href: "#",
-                    icon: <IconCar className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "vehicles"}
-                  onClick={() => setActiveSection("vehicles")}
-                  className="mb-2"
-                />
-                <SidebarLink
-                  link={{
-                    label: "Drivers",
-                    href: "#",
-                    icon: <IconUsersGroup className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "drivers"}
-                  onClick={() => setActiveSection("drivers")}
-                  className="mb-2"
-                />
-                <SidebarLink
-  link={{
-    label: "Notifications",
-    href: "#",
-    icon: <IconBell className="h-5 w-5" />,
-  }}
-  active={activeSection === "notifications"}
-  onClick={() => setActiveSection("notifications")}
-  className="mb-2"
-/>
-                <SidebarLink
-                  link={{
-                    label: "Settings",
-                    href: "#",
-                    icon: <IconSettings className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "settings"}
-                  onClick={() => setActiveSection("settings")}
-                  className="mb-2"
-                />
-                <SidebarLink
-                  link={{
-                    label: "Account",
-                    href: "#",
-                    icon: <IconUser className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "account"}
-                  onClick={() => setActiveSection("account")}
-                />
-              </div>
-              
-              {/* Maintenance Section with divider */}
-              <div className="border-t border-neutral-800 mx-3 my-4"></div>
-              
-              <div className="px-3">
-                <SidebarLink
-                  link={{
-                    label: "Service Schedule",
-                    href: "#",
-                    icon: <IconTool className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "service"}
-                  onClick={() => setActiveSection("service")}
-                  className="mb-2"
-                />
-                <SidebarLink
-                  link={{
-                    label: "Issues",
-                    href: "#",
-                    icon: <IconAlertTriangle className="h-5 w-5" />,
-                  }}
-                  active={activeSection === "issues"}
-                  onClick={() => setActiveSection("issues")}
-                />
-              </div>
+    <div className="h-screen flex flex-col md:flex-row bg-background">
+      <Sidebar>
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="mt-8 flex flex-col gap-2">
+              <SidebarLink
+                link={{
+                  label: "Dashboard",
+                  href: "#",
+                  icon: <IconDashboard className="h-5 w-5" />,
+                }}
+                active={activeSection === "dashboard"}
+                onClick={() => setActiveSection("dashboard")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Overview",
+                  href: "#",
+                  icon: <ClipboardList className="h-5 w-5" />,
+                }}
+                active={activeSection === "overview"}
+                onClick={() => setActiveSection("overview")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Vehicles",
+                  href: "#",
+                  icon: <IconCar className="h-5 w-5" />,
+                }}
+                active={activeSection === "vehicles"}
+                onClick={() => setActiveSection("vehicles")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Drivers",
+                  href: "#",
+                  icon: <IconUsersGroup className="h-5 w-5" />,
+                }}
+                active={activeSection === "drivers"}
+                onClick={() => setActiveSection("drivers")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Notifications",
+                  href: "#",
+                  icon: <IconBell className="h-5 w-5" />,
+                }}
+                active={activeSection === "notifications"}
+                onClick={() => setActiveSection("notifications")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Settings",
+                  href: "#",
+                  icon: <IconSettings className="h-5 w-5" />,
+                }}
+                active={activeSection === "settings"}
+                onClick={() => setActiveSection("settings")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Account",
+                  href: "#",
+                  icon: <IconUser className="h-5 w-5" />,
+                }}
+                active={activeSection === "account"}
+                onClick={() => setActiveSection("account")}
+              />
             </div>
-          </SidebarBody>
-        </Sidebar>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto">
-          {renderContent()}
-          
-          <VehicleDialog
-            vehicle={selectedVehicle}
-            open={!!selectedVehicle}
-            onOpenChange={(open) => !open && setSelectedVehicle(null)}
-          />
-        </div>
+            <div className="border-t border-neutral-800 mx-3 my-4"></div>
+
+            <div className="px-3">
+              <SidebarLink
+                link={{
+                  label: "Service Schedule",
+                  href: "#",
+                  icon: <IconTool className="h-5 w-5" />,
+                }}
+                active={activeSection === "service"}
+                onClick={() => setActiveSection("service")}
+                className="mb-2"
+              />
+              <SidebarLink
+                link={{
+                  label: "Issues",
+                  href: "#",
+                  icon: <IconAlertTriangle className="h-5 w-5" />,
+                }}
+                active={activeSection === "issues"}
+                onClick={() => setActiveSection("issues")}
+              />
+            </div>
+          </div>
+        </SidebarBody>
+      </Sidebar>
+      <div className="flex-1 overflow-y-auto">
+        {renderContent()}
+        <VehicleDialog
+          vehicle={selectedVehicle}
+          open={!!selectedVehicle}
+          onOpenChange={(open) => !open && setSelectedVehicle(null)}
+        />
       </div>
-      <ToastContainer 
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-    />
-  </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </div>
   );
 }
 
