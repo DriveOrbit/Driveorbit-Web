@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Driver } from '@/lib/types/driver';
+import { Driver } from '@/features/drivers/types/driver';
 
 interface DriverDialogProps {
   open: boolean;

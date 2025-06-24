@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { IconTruck, IconMap, IconRoute } from '@tabler/icons-react';
-import mockData from '@/lib/types/vehicledata';
+import mockData from '@/features/maps/types/vehicledata';
 
 interface Vehicle {
   id: string;
@@ -24,7 +24,7 @@ interface VehicleListProps {
   onVehicleSelect?: (id: string) => void;
 }
 
-const VehicleList: React.FC<VehicleListProps> = ({ onVehicleSelect = () => {} }) => {
+const VehicleList: React.FC<VehicleListProps> = ({ onVehicleSelect = () => { } }) => {
   const [filter, setFilter] = useState<'ALL' | 'DRIVING' | 'PARKED'>('ALL');
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [vehicles, setVehicles] = useState<Vehicle[]>(mockData.FIXED_VEHICLES); // Use fixed vehicles
@@ -51,9 +51,8 @@ const VehicleList: React.FC<VehicleListProps> = ({ onVehicleSelect = () => {} })
           {['ALL', 'DRIVING', 'PARKED'].map((type) => (
             <button
               key={type}
-              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                filter === type ? 'bg-green-500/10 text-green-500' : 'hover:bg-neutral-800 text-neutral-400'
-              }`}
+              className={`px-3 py-1 rounded-full text-xs font-medium ${filter === type ? 'bg-green-500/10 text-green-500' : 'hover:bg-neutral-800 text-neutral-400'
+                }`}
               onClick={() => setFilter(type as 'ALL' | 'DRIVING' | 'PARKED')}
             >
               {type}
@@ -66,19 +65,17 @@ const VehicleList: React.FC<VehicleListProps> = ({ onVehicleSelect = () => {} })
         {filteredVehicles.map((vehicle) => (
           <div
             key={vehicle.id}
-            className={`flex flex-col bg-neutral-800 rounded-lg transition-all duration-200 cursor-pointer hover:bg-neutral-750 ${
-              selectedVehicle === vehicle.id ? 'border-l-4 border-green-500' : ''
-            }`}
+            className={`flex flex-col bg-neutral-800 rounded-lg transition-all duration-200 cursor-pointer hover:bg-neutral-750 ${selectedVehicle === vehicle.id ? 'border-l-4 border-green-500' : ''
+              }`}
             onClick={() => handleVehicleClick(vehicle.id)}
           >
             <div className="flex items-center justify-between p-3">
               <div className="flex items-center space-x-3">
                 <div
-                  className={`w-2 h-2 rounded-full ${
-                    vehicle.status === 'active' ? 'bg-green-500' :
-                    vehicle.status === 'warning' ? 'bg-yellow-500' :
-                    'bg-red-500'
-                  }`}
+                  className={`w-2 h-2 rounded-full ${vehicle.status === 'active' ? 'bg-green-500' :
+                      vehicle.status === 'warning' ? 'bg-yellow-500' :
+                        'bg-red-500'
+                    }`}
                 />
                 <IconTruck className="w-6 h-6 text-neutral-400" />
                 <div>
@@ -119,11 +116,10 @@ const VehicleList: React.FC<VehicleListProps> = ({ onVehicleSelect = () => {} })
                 <div className="flex justify-between mb-1">
                   <span>Condition:</span>
                   <span
-                    className={`${
-                      vehicle.status === 'active' ? 'text-green-500' :
-                      vehicle.status === 'warning' ? 'text-yellow-500' :
-                      'text-red-500'
-                    }`}
+                    className={`${vehicle.status === 'active' ? 'text-green-500' :
+                        vehicle.status === 'warning' ? 'text-yellow-500' :
+                          'text-red-500'
+                      }`}
                   >
                     {vehicle.condition || 'Unknown'}
                   </span>

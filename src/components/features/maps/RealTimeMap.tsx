@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import { IconSearch, IconFilter, IconCar, IconX } from '@tabler/icons-react';
-import mockData from '@/lib/types/vehicledata';
+import mockData from '@/features/maps/types/vehicledata';
 
 // Updated vehicle interface to match the latest modifications
 interface VehicleData {
@@ -34,23 +34,42 @@ export default function RealTimeMap() {
   const [isValidInput, setIsValidInput] = useState(true);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
   useEffect(() => {
     const initializeMap = async () => {
       try {
+        // Check if API key exists
+        if (!process.env.NEXT_PUBLIC_MAPS_API_KEY) {
+          console.error('Google Maps API key is not configured');
+          return;
+        }
+
         const loader = new Loader({
           apiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY as string,
           version: 'quarterly',
+          libraries: ['maps', 'places'], // Added places library for future features
         });
 
         const { Map, InfoWindow } = await loader.importLibrary('maps');
 
-        const colomboCenter = mockData.COLOMBO_CENTER;
-
-        const options: google.maps.MapOptions = {
+        const colomboCenter = mockData.COLOMBO_CENTER; const options: google.maps.MapOptions = {
           center: colomboCenter,
           zoom: 13,
           mapId: 'NEXT_MAPS_Tuts',
+          // Security and performance enhancements
+          gestureHandling: 'cooperative',
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
+          zoomControl: true,
+          // Restrict map bounds to Sri Lanka for better performance
+          restriction: {
+            latLngBounds: {
+              north: 10.0,
+              south: 5.5,
+              west: 79.0,
+              east: 82.0,
+            },
+          },
         };
 
         const newMap = new Map(mapRef.current as HTMLDivElement, options);
@@ -171,14 +190,14 @@ export default function RealTimeMap() {
       const matchingVehicles = vehicles.filter(vehicle =>
         vehicle.id.toLowerCase().includes(query.toLowerCase())
       );
-      
+
       setFilteredVehicles(matchingVehicles);
-      
+
       // Generate suggestions based on current vehicles
       const suggestedIds = matchingVehicles
         .map(v => v.id)
         .slice(0, 5); // Limit to 5 suggestions
-      
+
       setSuggestions(suggestedIds);
       setShowSuggestions(suggestedIds.length > 0);
     }
@@ -203,7 +222,7 @@ export default function RealTimeMap() {
     if (vehicle && map && markersRef.current[vehicleId]) {
       map.panTo(vehicle.position);
       map.setZoom(15);
-      
+
       if (infoWindow) {
         infoWindow.setContent(createInfoWindowContent(vehicle));
         infoWindow.open(map, markersRef.current[vehicleId]);
@@ -218,9 +237,8 @@ export default function RealTimeMap() {
           <input
             type="text"
             placeholder="Search vehicles by number..."
-            className={`pl-8 pr-10 py-2 rounded-md bg-neutral-700 text-white text-sm w-64 focus:outline-none focus:ring-1 ${
-              isValidInput ? 'focus:ring-green-500' : 'focus:ring-red-500 border border-red-500'
-            }`}
+            className={`pl-8 pr-10 py-2 rounded-md bg-neutral-700 text-white text-sm w-64 focus:outline-none focus:ring-1 ${isValidInput ? 'focus:ring-green-500' : 'focus:ring-red-500 border border-red-500'
+              }`}
             value={searchQuery}
             onChange={handleSearchChange}
             onFocus={() => {
@@ -228,24 +246,24 @@ export default function RealTimeMap() {
             }}
           />
           <IconSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
-          
+
           {searchQuery && (
-            <button 
+            <button
               onClick={handleClearSearch}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-white p-1 rounded-full"
             >
               <IconX className="w-4 h-4" />
             </button>
           )}
-          
+
           {!isValidInput && (
             <p className="absolute text-red-500 text-xs mt-1">Please enter a valid vehicle number</p>
           )}
-          
+
           {showSuggestions && suggestions.length > 0 && (
             <div className="absolute z-50 mt-1 w-64 bg-neutral-800 border border-neutral-700 rounded-md shadow-lg">
               {suggestions.map((suggestion, index) => (
-                <div 
+                <div
                   key={index}
                   className="px-4 py-2 hover:bg-neutral-700 cursor-pointer flex items-center"
                   onClick={() => handleSuggestionClick(suggestion)}
@@ -257,7 +275,7 @@ export default function RealTimeMap() {
             </div>
           )}
         </div>
-        
+
         {filteredVehicles.length === 0 && searchQuery && isValidInput && (
           <div className="text-amber-400 text-sm ml-2">
             No vehicles matching "{searchQuery}"

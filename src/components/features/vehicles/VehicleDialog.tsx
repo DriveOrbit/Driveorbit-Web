@@ -1,6 +1,6 @@
- 'use client';
+'use client';
 
-import { Vehicle } from '@/lib/types/fleet';
+import { Vehicle } from '@/features/vehicles/types/fleet';
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ export function VehicleDialog({ vehicle, open, onOpenChange }: VehicleDialogProp
         <DialogHeader>
           <DialogTitle>{vehicle.name}</DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid gap-6">
           <div className="relative h-64 rounded-lg overflow-hidden">
             <Image
@@ -34,11 +34,10 @@ export function VehicleDialog({ vehicle, open, onOpenChange }: VehicleDialogProp
               fill
               className="object-cover"
             />
-            <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
-              vehicle.status === 'Available' 
+            <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${vehicle.status === 'Available'
                 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                 : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-            }`}>
+              }`}>
               {vehicle.status}
             </div>
           </div>

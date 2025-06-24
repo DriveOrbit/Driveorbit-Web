@@ -1,22 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { Vehicle, MaintenanceLog as MaintenanceLogType } from '@/lib/types/fleet';
-import { mockDrivers, mockVehicles } from '@/lib/mock-data';
-import { VehicleCard } from '@/components/ui/vehicle-card';
-import { VehicleDialog } from '@/components/ui/vehicle-dialog';
-import { VehicleDetails } from '@/components/ui/vehicle-details';
+// Use the new feature-based imports
+import { Vehicle } from '@/features/vehicles/types/fleet';
+import { Driver } from '@/features/drivers/types/driver';
+// Import from mock data (temporary until we connect to real API)
+import { mockDrivers, mockVehicles } from '@/lib/mock-data-simple';
+// Import components from their proper locations
+import { VehicleCard } from '@/components/features/vehicles/VehicleCard';
+import { VehicleDialog } from '@/components/features/vehicles/VehicleDialog';
+import { VehicleDetails } from '@/components/features/vehicles/VehicleDetails';
+import VehicleList from '@/components/features/vehicles/VehicleList';
+import { DriverCard } from '@/components/features/drivers/DriverCard';
+import { DriverDialog } from '@/components/features/drivers/DriverDialog';
 import { MaintenanceLog } from '@/components/ui/maintenance-log';
+import RealTimeMap from "@/components/features/maps/RealTimeMap";
+import NotificationManager from '@/components/ui/notification-manager';
 import { Car, ClipboardList, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Driver } from '@/lib/types/driver';
 import { Card } from '@/components/ui/card';
 import {
   Sidebar,
   SidebarBody,
   SidebarLink,
-  SidebarSection
-} from "@/components/ui/sidebar";
+} from "@/components/layout/Sidebar";
 import {
   IconDashboard,
   IconCar,
@@ -27,15 +34,10 @@ import {
   IconAlertTriangle,
   IconBell
 } from "@tabler/icons-react";
-import RealTimeMap from "@/components/ui/RealTimeMap";
-import VehicleList from "@/components/ui/VehicleList";
 import Link from "next/link";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import NotificationManager from '@/components/ui/notification-manager';
 import { Button } from '@/components/ui/button';
-import { DriverCard } from '@/components/ui/DriverCard';
-import { DriverDialog } from '@/components/ui/DriverDialog';
 import { Input } from '@/components/ui/input';
 
 export default function Home() {
@@ -44,7 +46,7 @@ export default function Home() {
   const [notificationCount, setNotificationCount] = useState(3);
   const [driverDialogOpen, setDriverDialogOpen] = useState(false);
   const [showVehicleDetails, setShowVehicleDetails] = useState(false);
-  
+
   const availableVehicles = mockVehicles.filter(v => v.status === 'Available');
   const totalVehicles = mockVehicles.length;
   const maintenanceVehicles = mockVehicles.filter(v => v.status === 'Maintenance').length;
@@ -191,12 +193,18 @@ export default function Home() {
                   No drivers found.
                 </div>
               )}
-            </div>
-            <DriverDialog
+            </div>            <DriverDialog
               open={driverDialogOpen}
               onOpenChange={setDriverDialogOpen}
-              onSave={(newDriver) => {
+              onSave={(newDriver: Omit<Driver, 'id'>) => {
                 console.log('New Driver:', newDriver);
+                // Generate a temporary ID for display (in real app, backend would provide this)
+                const driverWithId: Driver = {
+                  ...newDriver,
+                  id: `DRV${Date.now()}`, // Temporary ID generation
+                };
+                setSearchResults([...searchResults, driverWithId]);
+                toast.success('Driver registered successfully');
               }}
             />
           </motion.div>
@@ -309,7 +317,7 @@ export default function Home() {
                 Back to Overview
               </button>
             </div>
-            
+
             <Card className="p-6">
               <div className="space-y-4">
                 {mockVehicles.map((vehicle) => (
@@ -369,10 +377,8 @@ export default function Home() {
                       }`}>
                       {vehicle.status}
                     </span>
-                  </div>
-
-                  <div className="grid gap-4">
-                    {vehicle.maintenanceLogs.map((log) => (
+                  </div>                  <div className="grid gap-4">
+                    {vehicle.maintenanceLogs.map((log: any) => (
                       <MaintenanceLog key={log.id} log={log} />
                     ))}
                   </div>
@@ -548,11 +554,10 @@ export default function Home() {
         </SidebarBody>
       </Sidebar>
       <div className="flex-1 overflow-y-auto">
-        {renderContent()}
-        <VehicleDialog
+        {renderContent()}        <VehicleDialog
           vehicle={selectedVehicle}
           open={!!selectedVehicle && !showVehicleDetails}
-          onOpenChange={(open) => !open && setSelectedVehicle(null)}
+          onOpenChange={(open: boolean) => !open && setSelectedVehicle(null)}
         />
       </div>
       <ToastContainer

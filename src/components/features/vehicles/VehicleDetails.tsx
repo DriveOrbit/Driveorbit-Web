@@ -1,7 +1,7 @@
- 'use client';
+'use client';
 
-import { Vehicle } from '@/lib/types/fleet';
-import { Card } from './card';
+import { Vehicle } from '@/features/vehicles/types/fleet';
+import { Card } from '@/components/ui/card';
 import { format } from 'date-fns';
 import Image from 'next/image';
 
@@ -105,8 +105,8 @@ export function VehicleDetails({ vehicle, onClose }: VehicleDetailsProps) {
           <div>
             <p className="text-sm text-muted-foreground">Emission Test Expiry</p>
             <p className="font-medium">
-              {vehicle.emissionTestExpiry === 'N/A' 
-                ? 'N/A' 
+              {vehicle.emissionTestExpiry === 'N/A'
+                ? 'N/A'
                 : format(new Date(vehicle.emissionTestExpiry), 'PPP')}
             </p>
           </div>

@@ -1,5 +1,5 @@
 
-import { Driver } from '@/lib/types/driver';
+import { Driver } from '@/features/drivers/types/driver';
 import Image from 'next/image';
 
 interface DriverCardProps {

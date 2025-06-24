@@ -1,5 +1,5 @@
-import { Vehicle } from '@/lib/types/fleet';
-import { Driver } from '@/lib/types/driver';
+import { Vehicle } from '@/features/vehicles/types/fleet';
+import { Driver } from '@/features/drivers/types/driver';
 
 export const mockVehicles: Vehicle[] = [
   {
@@ -266,29 +266,7 @@ export const mockVehicles: Vehicle[] = [
         }
       }
     ]
-  },
-  {
-    id: '9',
-    name: 'Rivian R1S',
-    model: '2024',
-    type: 'SUV',
-    status: 'Available' | 'Booked' | 'Maintenance' | 'In Use',
-    imageUrl: 'https://images.unsplash.com/photo-1666919643134-d97687c1826c',
-    features: ['Adventure Package', 'Electric', 'Off-road Capability'],
-    capacity: 7,
-    fuelType: 'Electric',
-    licensePlate: 'RVN-2024',
-    lastMaintenance: '2024-02-20',
-    maintenanceLogs: [
-      {
-        id: '9-1',
-        date: '2024-02-20',
-        type: 'Regular Service',
-        description: 'Off-road system check',
-        nextDueDate: '2024-08-20'
-      }
-    ]
-  },
+  }, 
   {
     id: '10',
     name: 'Volvo XC90',
